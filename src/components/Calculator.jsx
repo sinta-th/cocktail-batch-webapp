@@ -66,12 +66,35 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
     setStep("confirm");
   };
 
-  const chooseBottle = (size) => {
+  const chooseBottle = (size, opts = {}) => {
+    const { isCustom = false } = opts;
     const servings = servingsFor(size);
+
     if (servings < 1) {
-      showToast(t.toastBottleTooSmall);
+      if (!isCustom) {
+        showToast(t.toastBottleTooSmall);
+        return;
+      }
+      // custom size smaller than one full serving: scale every ingredient
+      // proportionally so the batch lands exactly on the requested volume.
+      const scaleFactor = size / totalPerServe;
+      const scaled = validRows.map((r) => ({
+        name: r.name.trim(),
+        perServe: Number(r.amount),
+        scaled: Math.round(Number(r.amount) * scaleFactor * 100) / 100,
+      }));
+      const totalUsed = Math.round(scaled.reduce((s, i) => s + i.scaled, 0));
+      setResult({
+        bottleSize: size,
+        servings: Math.round(scaleFactor * 100) / 100,
+        totalUsed,
+        ingredients: scaled,
+        partial: true,
+      });
+      setStep("result");
       return;
     }
+
     const totalUsed = Math.round(servings * totalPerServe);
     const scaled = validRows.map((r) => ({
       name: r.name.trim(),
@@ -308,7 +331,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
               className="bc-btn bc-btn--primary"
               style={{ flex: "0 0 auto" }}
               disabled={!customSize || Number(customSize) <= 0}
-              onClick={() => chooseBottle(Number(customSize))}
+              onClick={() => chooseBottle(Number(customSize), { isCustom: true })}
             >
               {t.useCustomBtn}
             </button>
@@ -316,7 +339,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
           {customSize && Number(customSize) > 0 && (
             <p className="bc-card-sub" style={{ marginTop: 8, marginBottom: 0 }}>
               {servingsFor(Number(customSize)) < 1
-                ? t.bottleInsufficient
+                ? t.customPartialHint
                 : t.bottleServings(servingsFor(Number(customSize)))}
             </p>
           )}
@@ -336,11 +359,17 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
               <ResultBottle result={result} />
             </div>
             <div className="bc-result-meta">
-              <span className="bc-pill">{t.resultReady}</span>
+              <span className="bc-pill">{result.partial ? t.partialReady : t.resultReady}</span>
               <h2>{t.resultBottleTitle(result.bottleSize)}</h2>
-              <div className="bc-result-figure">
-                {result.servings} <span>{t.servingsLabel}</span>
-              </div>
+              {result.partial ? (
+                <p className="bc-card-sub" style={{ marginTop: 6, marginBottom: 0 }}>
+                  {t.partialScaleNote(result.servings)}
+                </p>
+              ) : (
+                <div className="bc-result-figure">
+                  {result.servings} <span>{t.servingsLabel}</span>
+                </div>
+              )}
               <p className="bc-card-sub" style={{ marginTop: 6, marginBottom: 0 }}>
                 {t.resultUsage(fmt(result.totalUsed), result.bottleSize)}
               </p>

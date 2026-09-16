@@ -123,6 +123,9 @@ export const STRINGS = {
     customBottlePlaceholder: "พิมพ์ขนาด (มล.)",
     useCustomBtn: "ใช้ขนาดนี้",
     componentNamePlaceholder: "ชื่อสูตรย่อย (ถ้ามี) เช่น สูตรต้มชา",
+    customPartialHint: "น้อยกว่า 1 เสิร์ฟ — ระบบจะปรับสัดส่วนส่วนผสมลงให้พอดีขนาดนี้แทน",
+    partialReady: "ปรับสัดส่วนแล้ว",
+    partialScaleNote: (factor) => `≈ ${factor} เท่าของสูตรต่อ 1 เสิร์ฟเดิม`,
   },
 
   en: {
@@ -241,6 +244,9 @@ export const STRINGS = {
     customBottlePlaceholder: "Enter size (ml)",
     useCustomBtn: "Use this size",
     componentNamePlaceholder: "Sub-recipe name (optional), e.g. Tea brew",
+    customPartialHint: "Less than one serving — ingredients will be scaled down to fit this size exactly.",
+    partialReady: "Proportionally scaled",
+    partialScaleNote: (factor) => `≈ ${factor}× the original per-serving recipe`,
   },
 
   my: {
@@ -359,6 +365,9 @@ export const STRINGS = {
     customBottlePlaceholder: "အရွယ်ထည့်ပါ (မလ)",
     useCustomBtn: "ဤအရွယ်ကိုသုံးမည်",
     componentNamePlaceholder: "အစိတ်အပိုင်းအမည် (ရွေးချယ်ခွင့်) ဥပမာ လက်ဖက်ရည်ချက်နည်း",
+    customPartialHint: "တစ်ခွက်ထက်နည်းသည် — ပါဝင်ပစ္စည်းများကို ဤအရွယ်နှင့် အံဝင်ခွင်ကျဖြစ်အောင် လျှော့ချပေးပါမည်",
+    partialReady: "အချိုးလိုက် ချိန်ညှိပြီး",
+    partialScaleNote: (factor) => `မူရင်း တစ်ခွက်ချက်နည်း၏ ≈ ${factor} ဆ`,
   },
 };
 

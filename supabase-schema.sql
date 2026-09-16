@@ -34,7 +34,7 @@ create table if not exists batches (
   ),
   component_name text,
   bottle_size int not null,
-  servings int not null,
+  servings numeric not null,
   total_used int not null,
   ingredients jsonb not null,
   created_by text
