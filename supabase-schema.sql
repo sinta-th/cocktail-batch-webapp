@@ -15,10 +15,12 @@ create table if not exists access_logs (
   accessed_at timestamptz not null default now()
 );
 
+-- แต่ละแถว = 1 "สูตรย่อย" (component batch) ที่ผูกกับค็อกเทล/ม็อกเทลตัวหนึ่ง
+-- ผ่านคอลัมน์ cocktail_name (หลายแถวมี cocktail_name เดียวกันได้ ถ้าเป็นสูตรย่อยคนละประเภทของค็อกเทลตัวเดียวกัน)
 create table if not exists batches (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  name text not null,
+  cocktail_name text not null,
   category text not null check (
     category in (
       'signature_cocktail',
@@ -26,6 +28,9 @@ create table if not exists batches (
       'beach_vibe',
       'classic_cocktail'
     )
+  ),
+  component_type text not null check (
+    component_type in ('liquor', 'cordial', 'syrup', 'pre_mixed')
   ),
   bottle_size int not null,
   servings int not null,

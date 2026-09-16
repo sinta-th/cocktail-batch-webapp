@@ -95,12 +95,28 @@ export const STRINGS = {
     savingBtn: "กำลังบันทึก…",
 
     savedTitle: "บันทึกสำเร็จ",
-    savedSub: (categoryLabel) => `บันทึกเข้าหมวด ${categoryLabel} เรียบร้อยแล้ว`,
+    savedSub: (cocktailName, componentLabel) => `บันทึก ${componentLabel} ของ "${cocktailName}" เรียบร้อยแล้ว`,
     saveImageBtn2: "บันทึกรูปภาพ",
     newBatchBtn: "ทำแบทช์ใหม่",
     goToLibraryBtn: "ไปที่คลังสูตร",
     toastSaved: "บันทึกสูตรแล้ว",
     toastSaveFailed: "บันทึกขึ้น cloud ไม่สำเร็จ ลองใหม่อีกครั้ง",
+
+    stepAssign: "ผูกสูตร",
+    assignTitle: "สูตรนี้เป็นของค็อกเทล/ม็อกเทลตัวไหน",
+    assignSub: "พิมพ์ชื่อค็อกเทล/ม็อกเทล ถ้ามีอยู่แล้วระบบจะเติมหมวดหมู่ให้อัตโนมัติ ถ้าเป็นชื่อใหม่ให้เลือกหมวดหมู่ด้วย",
+    cocktailNamePlaceholder: "ชื่อค็อกเทล/ม็อกเทล เช่น Beach Bear",
+    categoryLabel: "หมวดหมู่",
+    componentTypeLabel: "สูตรนี้เป็น batch ประเภทไหน",
+    existingCocktailHint: (name) => `พบ "${name}" อยู่แล้ว ใช้หมวดหมู่เดิมให้อัตโนมัติ`,
+    errCocktailNameRequired: "ใส่ชื่อค็อกเทล/ม็อกเทลก่อนบันทึก",
+    errComponentTypeRequired: "เลือกประเภท batch ก่อนบันทึก",
+
+    cocktailListEmpty: "ยังไม่มีค็อกเทล/ม็อกเทลในหมวดนี้",
+    batchListEmpty: "ยังไม่มีสูตรย่อยสำหรับตัวนี้",
+    batchCount: (n) => `${n} สูตรย่อย`,
+    backToList: "กลับไปรายชื่อ",
+    backToCocktail: "กลับไปดูสูตรย่อยอื่น",
   },
 
   en: {
@@ -191,12 +207,28 @@ export const STRINGS = {
     savingBtn: "Saving…",
 
     savedTitle: "Saved",
-    savedSub: (categoryLabel) => `Saved to the ${categoryLabel} category`,
+    savedSub: (cocktailName, componentLabel) => `Saved ${componentLabel} for "${cocktailName}"`,
     saveImageBtn2: "Save image",
     newBatchBtn: "Start a new batch",
     goToLibraryBtn: "Go to recipe library",
     toastSaved: "Recipe saved",
     toastSaveFailed: "Failed to save to the cloud, please try again",
+
+    stepAssign: "Assign",
+    assignTitle: "Which cocktail or mocktail is this for?",
+    assignSub: "Type the cocktail/mocktail name — if it already exists, the category fills in automatically. For a new name, choose a category.",
+    cocktailNamePlaceholder: "Cocktail/mocktail name, e.g. Beach Bear",
+    categoryLabel: "Category",
+    componentTypeLabel: "What type of batch is this?",
+    existingCocktailHint: (name) => `Found "${name}" already — using its existing category`,
+    errCocktailNameRequired: "Enter a cocktail/mocktail name before saving",
+    errComponentTypeRequired: "Choose a batch type before saving",
+
+    cocktailListEmpty: "No cocktails/mocktails in this category yet",
+    batchListEmpty: "No component batches for this one yet",
+    batchCount: (n) => `${n} component batches`,
+    backToList: "Back to list",
+    backToCocktail: "Back to other batches",
   },
 
   my: {
@@ -287,12 +319,28 @@ export const STRINGS = {
     savingBtn: "သိမ်းနေသည်…",
 
     savedTitle: "သိမ်းပြီးပါပြီ",
-    savedSub: (categoryLabel) => `${categoryLabel} အမျိုးအစားထဲ သိမ်းပြီးပါပြီ`,
+    savedSub: (cocktailName, componentLabel) => `"${cocktailName}" အတွက် ${componentLabel} ကို သိမ်းပြီးပါပြီ`,
     saveImageBtn2: "ပုံသိမ်းမည်",
     newBatchBtn: "Batch အသစ်စမည်",
     goToLibraryBtn: "ဟင်းချက်နည်းစာကြည့်တိုက်သို့သွားမည်",
     toastSaved: "ဟင်းချက်နည်းသိမ်းပြီးပါပြီ",
     toastSaveFailed: "cloud ပေါ်သို့ သိမ်း၍မရပါ၊ ထပ်စမ်းကြည့်ပါ",
+
+    stepAssign: "ချိတ်ဆက်မည်",
+    assignTitle: "ဤဟင်းချက်နည်းသည် ဘယ်ကော့တေးလ်/မော့တေးလ်အတွက်လဲ",
+    assignSub: "ကော့တေးလ်/မော့တေးလ်အမည်ကို ရိုက်ထည့်ပါ။ ရှိပြီးသားဖြစ်လျှင် အမျိုးအစားကို အလိုအလျောက်ဖြည့်ပေးမည်။ အမည်အသစ်ဖြစ်လျှင် အမျိုးအစားကို ရွေးပါ",
+    cocktailNamePlaceholder: "ကော့တေးလ်/မော့တေးလ်အမည် ဥပမာ Beach Bear",
+    categoryLabel: "အမျိုးအစား",
+    componentTypeLabel: "ဤသည် batch အမျိုးအစားဘယ်ခုလဲ",
+    existingCocktailHint: (name) => `"${name}" ရှိပြီးသားတွေ့ပါသည် — ရှိပြီးသားအမျိုးအစားကို အသုံးပြုမည်`,
+    errCocktailNameRequired: "မသိမ်းမီ ကော့တေးလ်/မော့တေးလ်အမည်ထည့်ပါ",
+    errComponentTypeRequired: "မသိမ်းမီ batch အမျိုးအစားရွေးပါ",
+
+    cocktailListEmpty: "ဤအမျိုးအစားတွင် ကော့တေးလ်/မော့တေးလ် မရှိသေးပါ",
+    batchListEmpty: "ဤအတွက် အစိတ်အပိုင်း batch မရှိသေးပါ",
+    batchCount: (n) => `${n} အစိတ်အပိုင်း batch`,
+    backToList: "စာရင်းသို့ ပြန်သွားမည်",
+    backToCocktail: "အခြား batch များကို ပြန်ကြည့်မည်",
   },
 };
 

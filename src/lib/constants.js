@@ -23,6 +23,15 @@ export const CATEGORIES = [
 
 export const CATEGORY_LABEL = Object.fromEntries(CATEGORIES.map((c) => [c.key, c.label]));
 
+export const COMPONENT_TYPES = [
+  { key: "liquor", label: "Liquor Batch" },
+  { key: "cordial", label: "Cordial Batch" },
+  { key: "syrup", label: "Syrup Batch" },
+  { key: "pre_mixed", label: "Pre-mixed" },
+];
+
+export const COMPONENT_TYPE_LABEL = Object.fromEntries(COMPONENT_TYPES.map((c) => [c.key, c.label]));
+
 // which menu items each role sees, in order
 export const MENU_BY_ROLE = {
   [ROLES.HOST]: ["recipes", "members", "calculator"],

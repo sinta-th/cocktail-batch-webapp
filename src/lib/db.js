@@ -43,6 +43,8 @@ export async function listAccessLogs(limit = 100) {
 }
 
 /* ---------- recipes (batches) ---------- */
+// Each row is one component batch (liquor / cordial / syrup / pre_mixed)
+// belonging to a named cocktail/mocktail ("cocktail_name" + "category").
 
 export async function fetchRecipes() {
   const { data, error } = await supabase.from("batches").select("*").order("created_at", { ascending: false });
@@ -50,12 +52,23 @@ export async function fetchRecipes() {
   return (data || []).map(mapRecipeRow);
 }
 
+export async function fetchCocktailNames() {
+  const { data, error } = await supabase.from("batches").select("cocktail_name, category").order("created_at", { ascending: true });
+  if (error) throw error;
+  const seen = new Map();
+  (data || []).forEach((row) => {
+    if (!seen.has(row.cocktail_name)) seen.set(row.cocktail_name, row.category);
+  });
+  return Array.from(seen.entries()).map(([name, category]) => ({ name, category }));
+}
+
 export async function insertRecipe(entry) {
   const { data, error } = await supabase
     .from("batches")
     .insert({
-      name: entry.name,
+      cocktail_name: entry.cocktailName,
       category: entry.category,
+      component_type: entry.componentType,
       bottle_size: entry.bottleSize,
       servings: entry.servings,
       total_used: entry.totalUsed,
@@ -77,8 +90,9 @@ function mapRecipeRow(row) {
   return {
     id: row.id,
     date: row.created_at,
-    name: row.name,
+    cocktailName: row.cocktail_name,
     category: row.category,
+    componentType: row.component_type,
     bottleSize: row.bottle_size,
     servings: row.servings,
     totalUsed: row.total_used,

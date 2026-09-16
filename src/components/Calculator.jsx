@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Bottle } from "./Bottle";
-import { BOTTLE_SIZES, CATEGORIES } from "../lib/constants";
+import { BOTTLE_SIZES, CATEGORIES, COMPONENT_TYPES } from "../lib/constants";
 import { fmt } from "../lib/format";
-import { insertRecipe } from "../lib/db";
+import { insertRecipe, fetchCocktailNames } from "../lib/db";
 import { downloadRecipeImage } from "../lib/image";
 
 let uidCounter = 1;
@@ -15,7 +15,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
     { key: "confirm", label: t.stepConfirm },
     { key: "bottle", label: t.stepBottle },
     { key: "result", label: t.stepResult },
-    { key: "category", label: t.stepCategory },
+    { key: "category", label: t.stepAssign },
   ];
 
   const [step, setStep] = useState("ingredients");
@@ -26,8 +26,13 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
   );
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
-  const [recipeName, setRecipeName] = useState("");
+
+  const [cocktailName, setCocktailName] = useState("");
   const [category, setCategory] = useState(null);
+  const [componentType, setComponentType] = useState(null);
+  const [knownCocktails, setKnownCocktails] = useState([]);
+  const [matchedExisting, setMatchedExisting] = useState(null);
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(null);
   const [toast, setToast] = useState("");
@@ -74,26 +79,47 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
     setStep("result");
   };
 
-  const goCategoryStep = () => {
-    if (!recipeName.trim()) setRecipeName(result.ingredients[0]?.name || "");
+  const goAssignStep = async () => {
     setStep("category");
+    try {
+      const names = await fetchCocktailNames();
+      setKnownCocktails(names);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleNameChange = (value) => {
+    setCocktailName(value);
+    const match = knownCocktails.find((c) => c.name.trim().toLowerCase() === value.trim().toLowerCase());
+    if (match) {
+      setMatchedExisting(match);
+      setCategory(match.category);
+    } else {
+      setMatchedExisting(null);
+    }
   };
 
   const saveRecipe = async () => {
-    if (!recipeName.trim()) {
-      setError(t.errNameRequired);
+    if (!cocktailName.trim()) {
+      setError(t.errCocktailNameRequired);
       return;
     }
     if (!category) {
       setError(t.errCategoryRequired);
       return;
     }
+    if (!componentType) {
+      setError(t.errComponentTypeRequired);
+      return;
+    }
     setError("");
     setSaving(true);
     try {
       const entry = await insertRecipe({
-        name: recipeName.trim(),
+        cocktailName: cocktailName.trim(),
         category,
+        componentType,
         bottleSize: result.bottleSize,
         servings: result.servings,
         totalUsed: result.totalUsed,
@@ -113,8 +139,10 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
   const startNewBatch = () => {
     setIngredients([emptyRow(), emptyRow(), emptyRow()]);
     setResult(null);
-    setRecipeName("");
+    setCocktailName("");
     setCategory(null);
+    setComponentType(null);
+    setMatchedExisting(null);
     setSaved(null);
     setError("");
     setStep("ingredients");
@@ -295,7 +323,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
             <button className="bc-btn bc-btn--ghost" onClick={() => setStep("bottle")}>
               {t.backAdjustBottle}
             </button>
-            <button className="bc-btn bc-btn--primary" onClick={goCategoryStep}>
+            <button className="bc-btn bc-btn--primary" onClick={goAssignStep}>
               {t.nextBtn}
             </button>
           </div>
@@ -304,23 +332,47 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
 
       {step === "category" && result && !saved && (
         <div className="bc-card" key="category">
-          <h2>{t.categoryTitle}</h2>
-          <p className="bc-card-sub">{t.categorySub}</p>
+          <h2>{t.assignTitle}</h2>
+          <p className="bc-card-sub">{t.assignSub}</p>
 
           <input
             className="bc-input bc-input--name"
-            style={{ width: "100%", marginBottom: 16 }}
-            placeholder={t.recipeNamePlaceholder}
-            value={recipeName}
-            onChange={(e) => setRecipeName(e.target.value)}
+            style={{ width: "100%", marginBottom: 8 }}
+            placeholder={t.cocktailNamePlaceholder}
+            value={cocktailName}
+            onChange={(e) => handleNameChange(e.target.value)}
+            list="bc-cocktail-names"
           />
+          <datalist id="bc-cocktail-names">
+            {knownCocktails.map((c) => (
+              <option key={c.name} value={c.name} />
+            ))}
+          </datalist>
 
+          {matchedExisting && (
+            <div className="bc-existing-hint">{t.existingCocktailHint(matchedExisting.name)}</div>
+          )}
+
+          <p className="bc-field-label">{t.categoryLabel}</p>
           <div className="bc-category-grid">
             {CATEGORIES.map((c) => (
               <button
                 key={c.key}
                 className={`bc-category-chip ${category === c.key ? "bc-category-chip--active" : ""}`}
                 onClick={() => setCategory(c.key)}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          <p className="bc-field-label">{t.componentTypeLabel}</p>
+          <div className="bc-category-grid">
+            {COMPONENT_TYPES.map((c) => (
+              <button
+                key={c.key}
+                className={`bc-category-chip ${componentType === c.key ? "bc-category-chip--active" : ""}`}
+                onClick={() => setComponentType(c.key)}
               >
                 {c.label}
               </button>
@@ -343,9 +395,12 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
       {step === "category" && saved && (
         <div className="bc-card" key="saved">
           <span className="bc-pill">{t.savedTitle}</span>
-          <h2>{saved.name}</h2>
+          <h2>{saved.cocktailName}</h2>
           <p className="bc-card-sub">
-            {t.savedSub(CATEGORIES.find((c) => c.key === saved.category)?.label || saved.category)}
+            {t.savedSub(
+              saved.cocktailName,
+              COMPONENT_TYPES.find((c) => c.key === saved.componentType)?.label || saved.componentType
+            )}
           </p>
 
           <div className="bc-actions">

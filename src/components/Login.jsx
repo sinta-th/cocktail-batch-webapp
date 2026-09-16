@@ -61,7 +61,6 @@ export default function Login({ onLogin, t }) {
         <button className="bc-btn bc-btn--primary bc-btn--full" disabled={loading}>
           {loading ? t.loginChecking : t.loginSubmit}
         </button>
-        <p className="bc-hint">{t.loginHint}</p>
       </form>
     </div>
   );

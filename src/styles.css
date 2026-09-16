@@ -179,6 +179,8 @@ html, body, #root {
 .bc-ing-row strong { color: var(--red); }
 
 /* category picker */
+.bc-field-label { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); margin: 14px 0 8px; text-transform: uppercase; letter-spacing: .02em; }
+.bc-existing-hint { font-size: 12.5px; color: var(--red); background: var(--red-tint); border-radius: 8px; padding: 7px 10px; margin-bottom: 4px; }
 .bc-category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 6px; }
 .bc-category-chip {
   border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 12px 10px;
@@ -230,6 +232,10 @@ html, body, #root {
 }
 .bc-tabbar button:hover { background: #fff; }
 .bc-tabbar .bc-tab-active { background: var(--red); border-color: var(--red); color: var(--cream); }
+
+.bc-list-row--clickable { cursor: pointer; transition: all .18s ease; }
+.bc-list-row--clickable:hover { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(142,28,46,0.12); }
+.bc-chevron { color: var(--ink-soft); font-size: 16px; }
 
 .bc-list-row {
   display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid var(--line);
