@@ -32,15 +32,21 @@ export const COMPONENT_TYPES = [
 
 export const COMPONENT_TYPE_LABEL = Object.fromEntries(COMPONENT_TYPES.map((c) => [c.key, c.label]));
 
+export const METHODS = [
+  { key: "stir", label: "Stir" },
+  { key: "shake", label: "Shake" },
+  { key: "building", label: "Building" },
+  { key: "blending", label: "Blending" },
+  { key: "throwing", label: "Throwing" },
+];
+
+export const METHOD_LABEL = Object.fromEntries(METHODS.map((m) => [m.key, m.label]));
+
+export const UNITS = ["ml", "g", "pcs", "drop", "dash"];
+
 // which menu items each role sees, in order
 export const MENU_BY_ROLE = {
-  [ROLES.HOST]: ["recipes", "members", "calculator"],
-  [ROLES.HEADBAR]: ["recipes", "calculator"],
-  [ROLES.SN_BARTENDER]: ["recipes"],
-};
-
-export const MENU_META = {
-  recipes: { title: "ดูสูตร batching", desc: "เรียกดูสูตรที่บันทึกไว้ แยกตามหมวดหมู่" },
-  members: { title: "สมาชิก", desc: "เพิ่ม/ลบสมาชิก และดูประวัติการเข้าใช้งาน" },
-  calculator: { title: "Calculator batching", desc: "เพิ่มส่วนผสมและคำนวณ batching ใหม่" },
+  [ROLES.HOST]: ["recipes", "cocktailRecipes", "members", "calculator"],
+  [ROLES.HEADBAR]: ["recipes", "cocktailRecipes", "calculator"],
+  [ROLES.SN_BARTENDER]: ["recipes", "cocktailRecipes"],
 };

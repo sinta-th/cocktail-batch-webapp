@@ -1,15 +1,16 @@
 # แบทช์ค็อกเทล — เครื่องคำนวณ Batching (มีรหัสผ่าน + สิทธิ์การใช้งาน + 3 ภาษา)
 
 เว็บแอปคำนวณสัดส่วนของเหลวสำหรับ batching cocktail มีระบบล็อกอินด้วยรหัส แบ่งสิทธิ์ตามตำแหน่ง
-คลังสูตรจัดหมวดหมู่ และสลับภาษาได้ 3 ภาษา (ไทย / English / မြန်မာ) ข้อมูลเก็บบน cloud (Supabase)
+คลังสูตรจัดหมวดหมู่ สูตร Cocktail แบบเสิร์ฟจริง และสลับภาษาได้ 3 ภาษา (ไทย / English / မြန်မာ)
+ข้อมูลเก็บบน cloud (Supabase)
 
 ## สิทธิ์การใช้งานแต่ละตำแหน่ง
 
 | ตำแหน่ง | รหัส | เมนูที่เห็น |
 |---|---|---|
-| **Host** | `mm001` (ค่าคงที่ ฝังไว้ในแอป) | ดูสูตร batching / สมาชิก / Calculator batching |
-| **HeadBar** | ตั้งโดย host ตอนเพิ่มสมาชิก | ดูสูตร batching / Calculator batching |
-| **Senior Bartender** | ตั้งโดย host ตอนเพิ่มสมาชิก | ดูสูตร batching เท่านั้น |
+| **Host** | `mm001` (ค่าคงที่ ฝังไว้ในแอป) | ดูสูตร batching / สูตร Cocktail / สมาชิก / Calculator batching |
+| **HeadBar** | ตั้งโดย host ตอนเพิ่มสมาชิก | ดูสูตร batching / สูตร Cocktail / Calculator batching |
+| **Senior Bartender** | ตั้งโดย host ตอนเพิ่มสมาชิก | ดูสูตร batching / สูตร Cocktail (ดูอย่างเดียว) |
 
 ## หมวดหมู่สูตร (4 หมวด)
 
@@ -23,7 +24,24 @@ Signature Cocktail / Signature Mocktail / Beach Vibe / Classic Cocktail
 
 ---
 
-## ⚠️ อัปเดตล่าสุด: Host แก้ไขสูตรที่บันทึกไว้ได้
+## ⚠️ อัปเดตล่าสุด: เมนู "สูตร Cocktail" ใหม่ (แยกจาก batching)
+
+เมนูใหม่นี้เป็นสูตร**เสิร์ฟจริง** (ไม่ใช่สูตรสำหรับ batch เตรียมล่วงหน้าแบบเมนู "ดูสูตร batching")
+ทุกตำแหน่งเข้าดูได้ (Host / HeadBar / Senior Bartender) แต่**เพิ่ม/แก้ไขได้เฉพาะ Host กับ HeadBar**
+
+กรอกคล้ายๆ กับ batching แต่มีส่วนเพิ่ม:
+- **Method**: Stir / Shake / Building / Blending / Throwing (เลือกได้ 1 อย่าง)
+- แต่ละส่วนผสมมี**หน่วย**ให้เลือก: ml / g / pcs / drop / dash (ไม่ใช่ ml อย่างเดียวเหมือน batching)
+- ช่อง**ของตกแต่ง (Garnish)**
+- อัปโหลด**รูปภาพ**สูตรได้ (ไม่บังคับ)
+
+**ต้องรันเพิ่มใน Supabase 2 ไฟล์** (รันทั้งคู่ ทีละไฟล์ ตามลำดับ):
+1. `supabase-migration-cocktail-recipes.sql` — สร้างตาราง `cocktail_recipes` + storage bucket สำหรับรูปภาพ
+2. `supabase-migration-batches-update-policy.sql` — แก้บั๊กที่ปุ่ม "แก้ไข" สูตร batching (ของ host) เคยกดบันทึกไม่ผ่าน
+   เพราะตาราง `batches` ไม่เคยมีสิทธิ์ update มาก่อน (ถ้าเพิ่งตั้ง Supabase ใหม่และรัน `supabase-schema.sql`
+   เวอร์ชันล่าสุดไปแล้ว ข้ามไฟล์นี้ได้เลย เพราะรวมอยู่ใน schema แล้ว)
+
+## ⚠️ อัปเดตก่อนหน้า: Host แก้ไขสูตรที่บันทึกไว้ได้
 
 ในหน้ารายละเอียดสูตรย่อย (กดเข้าไปจนเห็นขวด animation) ถ้าล็อกอินด้วย `mm001` (host) จะเห็นปุ่ม **"แก้ไข"**
 เพิ่มจากปุ่ม "ลบ" เดิม — แก้ได้ทุกอย่าง: ชื่อค็อกเทล/ม็อกเทล, หมวดหมู่, ประเภท batch, ชื่อสูตรย่อย,
@@ -156,8 +174,13 @@ cocktail-batch-webapp/
 ├── index.html
 ├── package.json
 ├── vite.config.js
-├── supabase-schema.sql               ← รันตอนตั้ง Supabase ใหม่
-├── supabase-migration-categories.sql ← รันตอนอัปเดตหมวดหมู่ ถ้าเคยรัน schema เก่าไปแล้ว
+├── supabase-schema.sql                        ← รันตอนตั้ง Supabase ใหม่ทั้งหมด (มีทุกตารางล่าสุด)
+├── supabase-migration-categories.sql          ← ประวัติ: เปลี่ยนเป็น 4 หมวดหมู่
+├── supabase-migration-batch-types.sql         ← ประวัติ: เพิ่ม cocktail_name + component_type
+├── supabase-migration-component-name.sql      ← ประวัติ: เพิ่มคอลัมน์ component_name
+├── supabase-migration-servings-numeric.sql    ← ประวัติ: servings รองรับทศนิยม
+├── supabase-migration-cocktail-recipes.sql    ← รันถ้ายังไม่มีตาราง cocktail_recipes / storage bucket รูปภาพ
+├── supabase-migration-batches-update-policy.sql ← รันถ้าปุ่ม "แก้ไข" สูตร batching ยังบันทึกไม่ผ่าน
 ├── .env.example
 └── src/
     ├── main.jsx
@@ -165,16 +188,21 @@ cocktail-batch-webapp/
     ├── styles.css
     ├── supabaseClient.js
     ├── lib/
-    │   ├── constants.js          ← host code, roles, 4 หมวดหมู่, เมนูตามสิทธิ์
+    │   ├── constants.js          ← host code, roles, หมวดหมู่, ประเภท batch, Method, หน่วย, เมนูตามสิทธิ์
     │   ├── i18n.js                ← ข้อความ 3 ภาษา (ไทย/English/မြန်မာ)
-    │   ├── db.js
-    │   ├── format.js
-    │   └── image.js
+    │   ├── db.js                  ← เรียก Supabase ทั้งหมด (members/logs/batches/cocktail_recipes/photo)
+    │   ├── format.js              ← ตัวช่วยจัดรูปแบบตัวเลข/วันที่/อัตราส่วน
+    │   ├── computeBatch.js        ← สูตรคำนวณ servings/สัดส่วน ใช้ร่วมกันระหว่างสร้างใหม่/แก้ไข
+    │   └── image.js               ← วาดรูปสรุปสูตร batching เป็น PNG (มีรูปขวด)
     └── components/
         ├── Bottle.jsx
         ├── Login.jsx
         ├── Menu.jsx
-        ├── Recipes.jsx
+        ├── Recipes.jsx            ← คลังสูตร batching (category → cocktail → component batch)
+        ├── EditRecipe.jsx         ← ฟอร์มแก้ไขสูตร batching (host เท่านั้น)
+        ├── CocktailRecipes.jsx    ← เมนู "สูตร Cocktail" ใหม่ (category → list → detail)
+        ├── CocktailRecipeForm.jsx ← ฟอร์มเพิ่ม/แก้ไขสูตร Cocktail (Method/หน่วย/ของตกแต่ง/รูป)
         ├── Members.jsx
         └── Calculator.jsx
 ```
+

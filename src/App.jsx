@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Login from "./components/Login";
 import Menu from "./components/Menu";
 import Recipes from "./components/Recipes";
+import CocktailRecipes from "./components/CocktailRecipes";
 import Members from "./components/Members";
 import Calculator from "./components/Calculator";
 import { GlassIcon } from "./components/Bottle";
@@ -122,6 +123,10 @@ export default function App() {
 
         {view === "recipes" && allowedViews.includes("recipes") && (
           <Recipes session={session} canCreate={canCreate} onReuse={goToCalculatorWith} t={t} />
+        )}
+
+        {view === "cocktailRecipes" && allowedViews.includes("cocktailRecipes") && (
+          <CocktailRecipes session={session} canCreate={canCreate} t={t} />
         )}
 
         {view === "members" && allowedViews.includes("members") && <Members t={t} />}

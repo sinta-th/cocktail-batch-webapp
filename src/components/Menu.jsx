@@ -3,6 +3,7 @@ import { ROLE_LABELS } from "../lib/constants";
 
 const ICONS = {
   recipes: "📖",
+  cocktailRecipes: "🍹",
   members: "👥",
   calculator: "🧮",
 };
@@ -10,6 +11,7 @@ const ICONS = {
 export default function Menu({ session, allowedViews, onNavigate, t }) {
   const META = {
     recipes: { title: t.menuRecipesTitle, desc: t.menuRecipesDesc },
+    cocktailRecipes: { title: t.menuCocktailRecipesTitle, desc: t.menuCocktailRecipesDesc },
     members: { title: t.menuMembersTitle, desc: t.menuMembersDesc },
     calculator: { title: t.menuCalcTitle, desc: t.menuCalcDesc },
   };

@@ -122,3 +122,94 @@ function mapRecipeRow(row) {
     createdBy: row.created_by,
   };
 }
+
+/* ---------- cocktail recipes (single-serve, with method/garnish/photo) ---------- */
+
+export async function uploadCocktailPhoto(file) {
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabase.storage.from("cocktail-photos").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from("cocktail-photos").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+export async function fetchCocktailRecipes() {
+  const { data, error } = await supabase
+    .from("cocktail_recipes")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data || []).map(mapCocktailRecipeRow);
+}
+
+export async function fetchCocktailRecipeNames() {
+  const { data, error } = await supabase
+    .from("cocktail_recipes")
+    .select("name, category")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  const seen = new Map();
+  (data || []).forEach((row) => {
+    if (!seen.has(row.name)) seen.set(row.name, row.category);
+  });
+  return Array.from(seen.entries()).map(([name, category]) => ({ name, category }));
+}
+
+export async function insertCocktailRecipe(entry) {
+  const { data, error } = await supabase
+    .from("cocktail_recipes")
+    .insert({
+      name: entry.name,
+      category: entry.category,
+      method: entry.method,
+      ingredients: entry.ingredients,
+      garnish: entry.garnish || null,
+      photo_url: entry.photoUrl || null,
+      created_by: entry.createdBy,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return mapCocktailRecipeRow(data);
+}
+
+export async function updateCocktailRecipe(id, entry) {
+  const { data, error } = await supabase
+    .from("cocktail_recipes")
+    .update({
+      name: entry.name,
+      category: entry.category,
+      method: entry.method,
+      ingredients: entry.ingredients,
+      garnish: entry.garnish || null,
+      photo_url: entry.photoUrl || null,
+    })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapCocktailRecipeRow(data);
+}
+
+export async function deleteCocktailRecipe(id) {
+  const { error } = await supabase.from("cocktail_recipes").delete().eq("id", id);
+  if (error) throw error;
+}
+
+function mapCocktailRecipeRow(row) {
+  return {
+    id: row.id,
+    date: row.created_at,
+    name: row.name,
+    category: row.category,
+    method: row.method,
+    ingredients: row.ingredients,
+    garnish: row.garnish,
+    photoUrl: row.photo_url,
+    createdBy: row.created_by,
+  };
+}
