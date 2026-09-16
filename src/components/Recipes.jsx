@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Bottle } from "./Bottle";
 import { fetchRecipes, deleteRecipe } from "../lib/db";
 import { CATEGORIES, COMPONENT_TYPES, ROLES } from "../lib/constants";
-import { fmt, formatDate } from "../lib/format";
+import { fmt, formatDate, ratioString } from "../lib/format";
 import { downloadRecipeImage } from "../lib/image";
 
 export default function Recipes({ session, canCreate, onReuse, t }) {
@@ -74,7 +74,7 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
               <span className="bc-pill">
                 {COMPONENT_TYPES.find((c) => c.key === activeBatch.componentType)?.label || activeBatch.componentType}
               </span>
-              <h2>{activeBatch.cocktailName}</h2>
+              <h2>{activeBatch.componentName || activeBatch.cocktailName}</h2>
               <div className="bc-result-figure">
                 {activeBatch.servings} <span>{t.servingsLabel}</span>
               </div>
@@ -97,6 +97,11 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
               </div>
             ))}
           </div>
+          {activeBatch.ingredients.length > 1 && (
+            <div className="bc-ratio-line">
+              {t.ratioLabel}: <strong>{ratioString(activeBatch.ingredients.map((i) => i.perServe))}</strong>
+            </div>
+          )}
 
           <p className="bc-card-sub" style={{ marginTop: 14, marginBottom: 0 }}>
             {formatDate(activeBatch.date)} · {activeBatch.createdBy || "-"}
@@ -138,10 +143,8 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
           batchesForCocktail.map((r) => (
             <div className="bc-list-row bc-list-row--clickable" key={r.id} onClick={() => setActiveBatch(r)}>
               <div className="bc-list-main">
-                <strong>{COMPONENT_TYPES.find((c) => c.key === r.componentType)?.label || r.componentType}</strong>
-                <span className="bc-badge">
-                  {r.bottleSize} {t.unitMl} · {r.servings} {t.servingsLabel}
-                </span>
+                <strong>{r.componentName || COMPONENT_TYPES.find((c) => c.key === r.componentType)?.label || r.componentType}</strong>
+                <span className="bc-badge">{COMPONENT_TYPES.find((c) => c.key === r.componentType)?.label}</span>
               </div>
               <span className="bc-chevron">›</span>
             </div>

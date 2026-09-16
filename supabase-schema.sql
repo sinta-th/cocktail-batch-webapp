@@ -32,6 +32,7 @@ create table if not exists batches (
   component_type text not null check (
     component_type in ('liquor', 'cordial', 'syrup', 'pre_mixed')
   ),
+  component_name text,
   bottle_size int not null,
   servings int not null,
   total_used int not null,

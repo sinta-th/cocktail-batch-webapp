@@ -1,4 +1,4 @@
-import { fmt, formatDate } from "./format";
+import { fmt, formatDate, ratioString } from "./format";
 import { CATEGORY_LABEL, COMPONENT_TYPE_LABEL } from "./constants";
 
 function drawBottle(ctx, x, y, w, h, ratio) {
@@ -54,7 +54,7 @@ export function downloadRecipeImage(entry) {
   const w = 680;
   const bottleAreaW = 220;
   const headerH = 100;
-  const contentH = Math.max(entry.ingredients.length * rowH + 90, 300);
+  const contentH = Math.max(entry.ingredients.length * rowH + 110, 300);
   const h = headerH + contentH;
 
   const canvas = document.createElement("canvas");
@@ -69,9 +69,10 @@ export function downloadRecipeImage(entry) {
   ctx.fillRect(0, 0, w, headerH);
   ctx.fillStyle = "#F5ECDD";
   ctx.font = "700 26px Georgia, serif";
-  ctx.fillText(entry.cocktailName || "BATCH COCKTAIL", 28, 42);
+  ctx.fillText(entry.componentName || entry.cocktailName || "BATCH COCKTAIL", 28, 42);
   ctx.font = "600 14px Georgia, serif";
   const subParts = [
+    entry.cocktailName,
     entry.category ? CATEGORY_LABEL[entry.category] || entry.category : null,
     entry.componentType ? COMPONENT_TYPE_LABEL[entry.componentType] || entry.componentType : null,
   ].filter(Boolean);
@@ -100,6 +101,14 @@ export function downloadRecipeImage(entry) {
     ctx.fillText(`${fmt(ing.scaled)} มล`, w - 24, y);
     y += rowH;
   });
+
+  const ratioText = ratioString(entry.ingredients.map((i) => i.perServe));
+  if (ratioText) {
+    ctx.fillStyle = "#7A6A58";
+    ctx.font = "13px 'Noto Sans Thai', sans-serif";
+    ctx.fillText(`อัตราส่วน ${ratioText}`, textX, y);
+    y += 20;
+  }
 
   ctx.textAlign = "left";
   ctx.strokeStyle = "rgba(43,27,20,0.2)";

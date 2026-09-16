@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Bottle } from "./Bottle";
 import { BOTTLE_SIZES, CATEGORIES, COMPONENT_TYPES } from "../lib/constants";
-import { fmt } from "../lib/format";
+import { fmt, ratioString } from "../lib/format";
 import { insertRecipe, fetchCocktailNames } from "../lib/db";
 import { downloadRecipeImage } from "../lib/image";
 
@@ -30,8 +30,11 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
   const [cocktailName, setCocktailName] = useState("");
   const [category, setCategory] = useState(null);
   const [componentType, setComponentType] = useState(null);
+  const [componentName, setComponentName] = useState("");
   const [knownCocktails, setKnownCocktails] = useState([]);
   const [matchedExisting, setMatchedExisting] = useState(null);
+
+  const [customSize, setCustomSize] = useState("");
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(null);
@@ -120,6 +123,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
         cocktailName: cocktailName.trim(),
         category,
         componentType,
+        componentName: componentName.trim(),
         bottleSize: result.bottleSize,
         servings: result.servings,
         totalUsed: result.totalUsed,
@@ -142,7 +146,9 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
     setCocktailName("");
     setCategory(null);
     setComponentType(null);
+    setComponentName("");
     setMatchedExisting(null);
+    setCustomSize("");
     setSaved(null);
     setError("");
     setStep("ingredients");
@@ -239,6 +245,11 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
               {fmt(totalPerServe)} {t.unitMl}
             </span>
           </div>
+          {validRows.length > 1 && (
+            <div className="bc-ratio-line">
+              {t.ratioLabel}: <strong>{ratioString(validRows.map((r) => Number(r.amount)))}</strong>
+            </div>
+          )}
 
           <div className="bc-actions">
             <button className="bc-btn bc-btn--ghost" onClick={() => setStep("ingredients")}>
@@ -279,6 +290,37 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
             })}
           </div>
 
+          <p className="bc-field-label">{t.customBottleTitle}</p>
+          <div className="bc-custom-bottle-row">
+            <div className="bc-amount-wrap" style={{ flex: 1 }}>
+              <input
+                className="bc-input bc-input--amount"
+                placeholder={t.customBottlePlaceholder}
+                type="number"
+                min="1"
+                inputMode="numeric"
+                value={customSize}
+                onChange={(e) => setCustomSize(e.target.value)}
+              />
+              <span className="bc-unit">{t.unitMl}</span>
+            </div>
+            <button
+              className="bc-btn bc-btn--primary"
+              style={{ flex: "0 0 auto" }}
+              disabled={!customSize || Number(customSize) <= 0}
+              onClick={() => chooseBottle(Number(customSize))}
+            >
+              {t.useCustomBtn}
+            </button>
+          </div>
+          {customSize && Number(customSize) > 0 && (
+            <p className="bc-card-sub" style={{ marginTop: 8, marginBottom: 0 }}>
+              {servingsFor(Number(customSize)) < 1
+                ? t.bottleInsufficient
+                : t.bottleServings(servingsFor(Number(customSize)))}
+            </p>
+          )}
+
           <div className="bc-actions">
             <button className="bc-btn bc-btn--ghost bc-btn--full" onClick={() => setStep("confirm")}>
               {t.back}
@@ -318,6 +360,11 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
               </div>
             ))}
           </div>
+          {result.ingredients.length > 1 && (
+            <div className="bc-ratio-line">
+              {t.ratioLabel}: <strong>{ratioString(result.ingredients.map((i) => i.perServe))}</strong>
+            </div>
+          )}
 
           <div className="bc-actions">
             <button className="bc-btn bc-btn--ghost" onClick={() => setStep("bottle")}>
@@ -379,6 +426,14 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
             ))}
           </div>
 
+          <input
+            className="bc-input bc-input--name"
+            style={{ width: "100%", marginTop: 4 }}
+            placeholder={t.componentNamePlaceholder}
+            value={componentName}
+            onChange={(e) => setComponentName(e.target.value)}
+          />
+
           {error && <div className="bc-error">{error}</div>}
 
           <div className="bc-actions">
@@ -395,7 +450,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
       {step === "category" && saved && (
         <div className="bc-card" key="saved">
           <span className="bc-pill">{t.savedTitle}</span>
-          <h2>{saved.cocktailName}</h2>
+          <h2>{saved.componentName || COMPONENT_TYPES.find((c) => c.key === saved.componentType)?.label}</h2>
           <p className="bc-card-sub">
             {t.savedSub(
               saved.cocktailName,

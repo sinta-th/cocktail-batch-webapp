@@ -117,6 +117,12 @@ export const STRINGS = {
     batchCount: (n) => `${n} สูตรย่อย`,
     backToList: "กลับไปรายชื่อ",
     backToCocktail: "กลับไปดูสูตรย่อยอื่น",
+
+    ratioLabel: "อัตราส่วน",
+    customBottleTitle: "กำหนดขนาดเอง",
+    customBottlePlaceholder: "พิมพ์ขนาด (มล.)",
+    useCustomBtn: "ใช้ขนาดนี้",
+    componentNamePlaceholder: "ชื่อสูตรย่อย (ถ้ามี) เช่น สูตรต้มชา",
   },
 
   en: {
@@ -229,6 +235,12 @@ export const STRINGS = {
     batchCount: (n) => `${n} component batches`,
     backToList: "Back to list",
     backToCocktail: "Back to other batches",
+
+    ratioLabel: "Ratio",
+    customBottleTitle: "Custom size",
+    customBottlePlaceholder: "Enter size (ml)",
+    useCustomBtn: "Use this size",
+    componentNamePlaceholder: "Sub-recipe name (optional), e.g. Tea brew",
   },
 
   my: {
@@ -341,6 +353,12 @@ export const STRINGS = {
     batchCount: (n) => `${n} အစိတ်အပိုင်း batch`,
     backToList: "စာရင်းသို့ ပြန်သွားမည်",
     backToCocktail: "အခြား batch များကို ပြန်ကြည့်မည်",
+
+    ratioLabel: "အချိုး",
+    customBottleTitle: "ကိုယ်တိုင်သတ်မှတ်မည်",
+    customBottlePlaceholder: "အရွယ်ထည့်ပါ (မလ)",
+    useCustomBtn: "ဤအရွယ်ကိုသုံးမည်",
+    componentNamePlaceholder: "အစိတ်အပိုင်းအမည် (ရွေးချယ်ခွင့်) ဥပမာ လက်ဖက်ရည်ချက်နည်း",
   },
 };
 
