@@ -69,7 +69,7 @@ export default function Calculator({ session, prefillIngredients, onDone, t }) {
       showToast(t.toastBottleTooSmall);
       return;
     }
-    const totalUsed = servings * totalPerServe;
+    const totalUsed = Math.round(servings * totalPerServe);
     const scaled = validRows.map((r) => ({
       name: r.name.trim(),
       perServe: Number(r.amount),
