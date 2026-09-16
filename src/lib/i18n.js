@@ -126,6 +126,17 @@ export const STRINGS = {
     customPartialHint: "น้อยกว่า 1 เสิร์ฟ — ระบบจะปรับสัดส่วนส่วนผสมลงให้พอดีขนาดนี้แทน",
     partialReady: "ปรับสัดส่วนแล้ว",
     partialScaleNote: (factor) => `≈ ${factor} เท่าของสูตรต่อ 1 เสิร์ฟเดิม`,
+
+    editRecipeTitle: "แก้ไขสูตร",
+    editRecipeSub: "แก้ไขได้ทุกช่อง ระบบจะคำนวณสัดส่วนใหม่ให้อัตโนมัติ",
+    editBottleSizeLabel: "ขนาดขวด (มล.)",
+    saveChangesBtn: "บันทึกการแก้ไข",
+    savingChangesBtn: "กำลังบันทึก…",
+    cancelBtn: "ยกเลิก",
+    errEditInvalid: "กรอกข้อมูลให้ครบและขนาดขวดต้องพอสำหรับสูตรอย่างน้อย 1 รายการ",
+    errEditFailed: "แก้ไขไม่สำเร็จ ลองใหม่อีกครั้ง",
+    editSaved: "บันทึกการแก้ไขแล้ว",
+    livePreviewLabel: "ตัวอย่างผลลัพธ์",
   },
 
   en: {
@@ -247,6 +258,17 @@ export const STRINGS = {
     customPartialHint: "Less than one serving — ingredients will be scaled down to fit this size exactly.",
     partialReady: "Proportionally scaled",
     partialScaleNote: (factor) => `≈ ${factor}× the original per-serving recipe`,
+
+    editRecipeTitle: "Edit recipe",
+    editRecipeSub: "Edit any field — the system recalculates everything automatically",
+    editBottleSizeLabel: "Bottle size (ml)",
+    saveChangesBtn: "Save changes",
+    savingChangesBtn: "Saving…",
+    cancelBtn: "Cancel",
+    errEditInvalid: "Fill in every field — you need at least one ingredient and a valid bottle size",
+    errEditFailed: "Failed to save changes, please try again",
+    editSaved: "Changes saved",
+    livePreviewLabel: "Preview",
   },
 
   my: {
@@ -368,6 +390,17 @@ export const STRINGS = {
     customPartialHint: "တစ်ခွက်ထက်နည်းသည် — ပါဝင်ပစ္စည်းများကို ဤအရွယ်နှင့် အံဝင်ခွင်ကျဖြစ်အောင် လျှော့ချပေးပါမည်",
     partialReady: "အချိုးလိုက် ချိန်ညှိပြီး",
     partialScaleNote: (factor) => `မူရင်း တစ်ခွက်ချက်နည်း၏ ≈ ${factor} ဆ`,
+
+    editRecipeTitle: "ဟင်းချက်နည်းပြင်ဆင်မည်",
+    editRecipeSub: "ဘယ်အကွက်ကိုမဆို ပြင်ဆင်နိုင်သည် — စနစ်က အလိုအလျောက် ပြန်တွက်ပေးမည်",
+    editBottleSizeLabel: "ပုလင်းအရွယ် (မလ)",
+    saveChangesBtn: "အပြောင်းအလဲများသိမ်းမည်",
+    savingChangesBtn: "သိမ်းနေသည်…",
+    cancelBtn: "ပယ်ဖျက်မည်",
+    errEditInvalid: "အကွက်အားလုံးဖြည့်ပါ — ပါဝင်ပစ္စည်း အနည်းဆုံးတစ်ခုနှင့် မှန်ကန်သောပုလင်းအရွယ်လိုအပ်သည်",
+    errEditFailed: "ပြင်ဆင်မှု မအောင်မြင်ပါ၊ ထပ်စမ်းကြည့်ပါ",
+    editSaved: "အပြောင်းအလဲများ သိမ်းပြီးပါပြီ",
+    livePreviewLabel: "အစမ်းကြည့်ရှုမှု",
   },
 };
 

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Bottle } from "./Bottle";
+import EditRecipe from "./EditRecipe";
 import { fetchRecipes, deleteRecipe } from "../lib/db";
 import { CATEGORIES, COMPONENT_TYPES, ROLES } from "../lib/constants";
 import { fmt, formatDate, ratioString } from "../lib/format";
@@ -12,6 +13,15 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0].key);
   const [activeCocktail, setActiveCocktail] = useState(null); // cocktail name string
   const [activeBatch, setActiveBatch] = useState(null); // recipe row
+  const [editing, setEditing] = useState(false);
+  const [toast, setToast] = useState("");
+  const toastTimer = useRef(null);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(""), 2600);
+  };
 
   const load = useCallback(async () => {
     setError("");
@@ -56,7 +66,26 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
     setActiveCategory(key);
     setActiveCocktail(null);
     setActiveBatch(null);
+    setEditing(false);
   };
+
+  const handleSaved = (updated) => {
+    setEditing(false);
+    setActiveBatch(null);
+    setActiveCocktail(null);
+    showToast(t.editSaved);
+    load();
+  };
+
+  // ---- edit mode (host only) ----
+  if (activeBatch && editing) {
+    return (
+      <div className="bc-shell">
+        <EditRecipe recipe={activeBatch} t={t} onSaved={handleSaved} onCancel={() => setEditing(false)} />
+        {toast && <div className="bc-toast">{toast}</div>}
+      </div>
+    );
+  }
 
   // ---- level 3: single batch detail (animated bottle) ----
   if (activeBatch) {
@@ -119,12 +148,16 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
           </div>
           {canDelete && (
             <div className="bc-actions" style={{ marginTop: 10 }}>
-              <button className="bc-btn bc-btn--ghost bc-btn--full" onClick={() => remove(activeBatch.id)}>
+              <button className="bc-btn bc-btn--ghost" onClick={() => setEditing(true)}>
+                {t.editBtn}
+              </button>
+              <button className="bc-btn bc-btn--ghost" onClick={() => remove(activeBatch.id)}>
                 {t.delete}
               </button>
             </div>
           )}
         </div>
+        {toast && <div className="bc-toast">{toast}</div>}
       </div>
     );
   }
@@ -189,6 +222,7 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
           );
         })
       )}
+      {toast && <div className="bc-toast">{toast}</div>}
     </div>
   );
 }

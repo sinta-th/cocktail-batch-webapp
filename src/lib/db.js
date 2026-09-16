@@ -82,6 +82,26 @@ export async function insertRecipe(entry) {
   return mapRecipeRow(data);
 }
 
+export async function updateRecipe(id, entry) {
+  const { data, error } = await supabase
+    .from("batches")
+    .update({
+      cocktail_name: entry.cocktailName,
+      category: entry.category,
+      component_type: entry.componentType,
+      component_name: entry.componentName || null,
+      bottle_size: entry.bottleSize,
+      servings: entry.servings,
+      total_used: entry.totalUsed,
+      ingredients: entry.ingredients,
+    })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapRecipeRow(data);
+}
+
 export async function deleteRecipe(id) {
   const { error } = await supabase.from("batches").delete().eq("id", id);
   if (error) throw error;
