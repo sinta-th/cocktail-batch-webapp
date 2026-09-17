@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import CocktailRecipeForm from "./CocktailRecipeForm";
-import { fetchCocktailRecipes, deleteCocktailRecipe } from "../lib/db";
+import { fetchCocktailRecipes, deleteCocktailRecipe, deleteCocktailRecipes } from "../lib/db";
 import { CATEGORIES, METHODS, ROLES } from "../lib/constants";
 import { formatDate } from "../lib/format";
 
@@ -13,6 +13,8 @@ export default function CocktailRecipes({ session, canCreate, t }) {
   const [mode, setMode] = useState("view"); // 'view' | 'new' | 'edit'
   const [toast, setToast] = useState("");
   const toastTimer = useRef(null);
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set());
 
   const canDelete = session.role === ROLES.HOST;
 
@@ -58,6 +60,35 @@ export default function CocktailRecipes({ session, canCreate, t }) {
   };
 
   const inCategory = recipes.filter((r) => r.category === activeCategory);
+
+  const openCategory = (key) => {
+    setActiveCategory(key);
+    setSelectMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const toggleSelected = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const bulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!window.confirm(t.confirmBulkDelete(ids.length))) return;
+    setRecipes((r) => r.filter((x) => !ids.includes(x.id)));
+    setSelectMode(false);
+    setSelectedIds(new Set());
+    try {
+      await deleteCocktailRecipes(ids);
+    } catch (e) {
+      console.error(e);
+      load();
+    }
+  };
 
   // ---- create / edit form ----
   if (mode === "new" || mode === "edit") {
@@ -142,7 +173,7 @@ export default function CocktailRecipes({ session, canCreate, t }) {
           <button
             key={c.key}
             className={`bc-cat-tab ${activeCategory === c.key ? "bc-cat-tab--active" : ""}`}
-            onClick={() => setActiveCategory(c.key)}
+            onClick={() => openCategory(c.key)}
           >
             {c.label}
           </button>
@@ -157,18 +188,61 @@ export default function CocktailRecipes({ session, canCreate, t }) {
 
       {error && <div className="bc-banner">{error}</div>}
 
+      {canDelete && inCategory.length > 0 && (
+        <div className="bc-select-toolbar">
+          {selectMode ? (
+            <>
+              <span className="bc-muted">{t.selectedCount(selectedIds.size)}</span>
+              <div className="bc-select-actions">
+                <button
+                  className="bc-nav-btn"
+                  onClick={() => {
+                    setSelectMode(false);
+                    setSelectedIds(new Set());
+                  }}
+                >
+                  {t.cancelBtn}
+                </button>
+                <button className="bc-nav-btn bc-nav-btn--active" onClick={bulkDelete} disabled={selectedIds.size === 0}>
+                  {t.deleteSelectedBtn(selectedIds.size)}
+                </button>
+              </div>
+            </>
+          ) : (
+            <button className="bc-nav-btn" onClick={() => setSelectMode(true)}>
+              {t.selectMultipleBtn}
+            </button>
+          )}
+        </div>
+      )}
+
       {!loaded ? (
         <div className="bc-empty">{t.loadingCocktailRecipes}</div>
       ) : inCategory.length === 0 ? (
         <div className="bc-empty">{t.cocktailRecipeListEmpty}</div>
       ) : (
         inCategory.map((r) => (
-          <div className="bc-list-row bc-list-row--clickable" key={r.id} onClick={() => setActiveRecipe(r)}>
+          <div
+            className={`bc-list-row ${selectMode ? "" : "bc-list-row--clickable"} ${
+              selectedIds.has(r.id) ? "bc-list-row--selected" : ""
+            }`}
+            key={r.id}
+            onClick={() => (selectMode ? toggleSelected(r.id) : setActiveRecipe(r))}
+          >
             <div className="bc-list-main">
+              {selectMode && (
+                <input
+                  type="checkbox"
+                  className="bc-row-checkbox"
+                  checked={selectedIds.has(r.id)}
+                  onChange={() => toggleSelected(r.id)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
               <strong>{r.name}</strong>
               <span className="bc-badge">{METHODS.find((m) => m.key === r.method)?.label || r.method}</span>
             </div>
-            <span className="bc-chevron">›</span>
+            {!selectMode && <span className="bc-chevron">›</span>}
           </div>
         ))
       )}

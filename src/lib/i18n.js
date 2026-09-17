@@ -158,6 +158,11 @@ export const STRINGS = {
     cocktailRecipeSaved: "บันทึกสูตรค็อกเทลแล้ว",
     errCocktailRecipeInvalid: "กรอกชื่อ หมวดหมู่ Method และส่วนผสมอย่างน้อย 1 รายการ",
     errPhotoUploadFailed: "อัปโหลดรูปไม่สำเร็จ ลองใหม่อีกครั้ง",
+
+    selectMultipleBtn: "เลือกหลายรายการ",
+    selectedCount: (n) => `เลือกแล้ว ${n} รายการ`,
+    deleteSelectedBtn: (n) => `ลบที่เลือก (${n})`,
+    confirmBulkDelete: (n) => `ยืนยันลบ ${n} รายการนี้? การลบไม่สามารถย้อนกลับได้`,
   },
 
   en: {
@@ -311,6 +316,11 @@ export const STRINGS = {
     cocktailRecipeSaved: "Cocktail recipe saved",
     errCocktailRecipeInvalid: "Fill in the name, category, method, and at least one ingredient",
     errPhotoUploadFailed: "Failed to upload the photo, please try again",
+
+    selectMultipleBtn: "Select multiple",
+    selectedCount: (n) => `${n} selected`,
+    deleteSelectedBtn: (n) => `Delete selected (${n})`,
+    confirmBulkDelete: (n) => `Delete these ${n} items? This cannot be undone.`,
   },
 
   my: {
@@ -464,6 +474,11 @@ export const STRINGS = {
     cocktailRecipeSaved: "ကော့တေးလ်ချက်နည်းသိမ်းပြီးပါပြီ",
     errCocktailRecipeInvalid: "အမည်၊ အမျိုးအစား၊ Method နှင့် ပါဝင်ပစ္စည်း အနည်းဆုံးတစ်ခုထည့်ပါ",
     errPhotoUploadFailed: "ဓာတ်ပုံတင်၍မရပါ၊ ထပ်စမ်းကြည့်ပါ",
+
+    selectMultipleBtn: "အများကြီးရွေးမည်",
+    selectedCount: (n) => `${n} ခု ရွေးထားသည်`,
+    deleteSelectedBtn: (n) => `ရွေးထားသည်များ ဖျက်မည် (${n})`,
+    confirmBulkDelete: (n) => `ဤ ${n} ခုကို ဖျက်ပစ်မှာသေချာပါသလား? ပြန်ရမည်မဟုတ်ပါ`,
   },
 };
 

@@ -107,6 +107,12 @@ export async function deleteRecipe(id) {
   if (error) throw error;
 }
 
+export async function deleteRecipes(ids) {
+  if (!ids.length) return;
+  const { error } = await supabase.from("batches").delete().in("id", ids);
+  if (error) throw error;
+}
+
 function mapRecipeRow(row) {
   return {
     id: row.id,
@@ -197,6 +203,12 @@ export async function updateCocktailRecipe(id, entry) {
 
 export async function deleteCocktailRecipe(id) {
   const { error } = await supabase.from("cocktail_recipes").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteCocktailRecipes(ids) {
+  if (!ids.length) return;
+  const { error } = await supabase.from("cocktail_recipes").delete().in("id", ids);
   if (error) throw error;
 }
 
