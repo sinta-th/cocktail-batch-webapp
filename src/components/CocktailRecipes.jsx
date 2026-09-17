@@ -110,7 +110,8 @@ export default function CocktailRecipes({ session, canCreate, t }) {
           )}
 
           <p className="bc-card-sub" style={{ marginTop: 10, marginBottom: 0 }}>
-            {formatDate(activeRecipe.date)} · {activeRecipe.createdBy || "-"}
+            {formatDate(activeRecipe.date)}
+            {session.role === ROLES.HOST && activeRecipe.createdBy ? ` · ${activeRecipe.createdBy}` : ""}
           </p>
 
           {(canCreate || canDelete) && (

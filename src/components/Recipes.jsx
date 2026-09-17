@@ -133,7 +133,8 @@ export default function Recipes({ session, canCreate, onReuse, t }) {
           )}
 
           <p className="bc-card-sub" style={{ marginTop: 14, marginBottom: 0 }}>
-            {formatDate(activeBatch.date)} · {activeBatch.createdBy || "-"}
+            {formatDate(activeBatch.date)}
+            {session.role === ROLES.HOST && activeBatch.createdBy ? ` · ${activeBatch.createdBy}` : ""}
           </p>
 
           <div className="bc-actions">
